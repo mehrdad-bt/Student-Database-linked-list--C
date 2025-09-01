@@ -23,13 +23,13 @@ int S_numbers=0;
 
 /*Functios Prototype*/
 
-void Add(int);
-void Delete(int);
-void Search(int);
-void Save(int);
-void PrintAll(int);
+void Add();
+void Delete();
+void Search();
+void Save();
+void PrintAll();
 
-void (*Op[5])(int) = 
+void (*Op[5])(void) = 
 {
     Add,
     Delete,
@@ -41,7 +41,7 @@ void (*Op[5])(int) =
 
 void Start();
 
-int Menu(int op_index, void(*Op[])()){
+void Menu(int op_index, void(*Op[])(void)){
 
     Op[op_index]();
 
@@ -72,7 +72,12 @@ int main(){
     Menu(choice-1, Op);    
     }while(choice != 6);
 
-    free(newStudent);
+    while(head)
+    {
+    Student *temp=head;
+    head=head->next;
+    free(temp);
+    }
 
     return 0;
 }
@@ -85,13 +90,14 @@ int main(){
 
 /*Functions Definitions*/
 
-void Start(int null){
+void Start(){
 
     StudentFile temp;
 
     FILE *fp = fopen("Database.hex","rb");
     if(fp == NULL){
         printf("Data has not been loaded!\n");
+        return;
     }
     fread(&S_numbers, sizeof(S_numbers), 1, fp);
     for(int i=0; i < S_numbers; i++)
@@ -136,6 +142,11 @@ void Add(int null){
     float grade;
 
     newStudent = (Student*)malloc(sizeof(Student));
+    if(newStudent == NULL)
+    {
+        printf("Memory allocation failed!\n");
+        return;
+    }
     printf("Enter student id:\n");
     scanf("%d", &id);
     printf("Enter student name:\n");
@@ -192,7 +203,7 @@ void Add(int null){
             printf("No Data to Print!\n");
         }
 
-        for(int i=0; i< S_numbers; i++)
+        while(current != NULL)
         {
             printf("Name:%s\t\t Id:%d\t Grade:%f\n",current->name, current->id, current->grade);
             current = current->next;
@@ -212,7 +223,7 @@ void Add(int null){
 
         while(current != NULL)
         {
-            if(strcmp(current->name, name) == 1)
+            if(strcmp(current->name, name) == 0)
             {
                 found = 1;
                 break;
@@ -224,7 +235,7 @@ void Add(int null){
         {
             printf(" ""%s"" Exist in your Database\n", name);
         }
-        else if(found ==0)
+        else
         {
             printf(" ""%s"" Does not Exist in your Database\n", name);
         }
@@ -239,7 +250,7 @@ void Add(int null){
         printf("Enter Student name to delete:\n");
         scanf("%s", name);
 
-        while(strcmp(current->name, name) != 0)
+        while(current !=NULL && strcmp(current->name, name) != 0)
         {
         prev = current;
         current = current->next;
