@@ -59,7 +59,7 @@ int main(){
     int choice=0;
     Start();
     do{
-    printf("-----------------------Menu----------------------\n Please Enter an option:\n 1=Add a Student\n 2=Delete a Student\n 3=Search by name\n 4=Save to Database\n 5=Print All Students Data\n 6=Exit\n");
+    printf("\t\t\t\t-----------------------Menu----------------------\n\n\t\t\t\t\t\tPlease Enter an option:\n 1=Add a Student\n 2=Delete a Student\n 3=Search by name\n 4=Save to Database\n 5=Print All Students Data\n 6=Exit\n\n\n");
     scanf("%d", &choice);
 
     if(choice < 1 || choice >6)
@@ -181,7 +181,8 @@ void Add(int null){
         fwrite(&temp, sizeof(StudentFile), 1, fp);
         current = current->next;
         } 
-        fclose(fp);   
+        fclose(fp); 
+        printf("New Records has been saved!\n");  
     }
 
     void PrintAll(int null){
@@ -235,11 +236,10 @@ void Add(int null){
         Student *prev = head;
         char name[50];
         
-
         printf("Enter Student name to delete:\n");
         scanf("%s", name);
 
-        while(strcmp(current->name, name)!=1)
+        while(strcmp(current->name, name) != 0)
         {
         prev = current;
         current = current->next;
@@ -247,16 +247,23 @@ void Add(int null){
         
         if(current->next==NULL)
         {
-        
+            printf("Reached end of data\n");
             tail = prev;
             tail->next = NULL;
         }
+        else if(current == head)
+        {
+            head = current->next;
+        }
+
         else
         {
             prev->next = current->next;
         }
 
         free(current);
+        S_numbers--;
+        printf("Student ""%s"" has been deleted succesfully!\n", name);
 
 
     }
