@@ -1,0 +1,161 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+/*TypeDef and Global Variables*/
+typedef struct Student{
+    int id;
+    char name[50];
+    float grade;
+    struct Student *next;
+}Student;
+
+typedef struct StudentFile{
+    int id;
+    char name[50];
+    float grade;
+}StudentFile;
+
+Student *head = NULL;
+Student *tail = NULL;
+Student *newStudent;
+int S_numbers=0;
+
+/*Functios Prototype*/
+
+
+/*Functions Definitions*/
+void Start(){
+
+    StudentFile temp;
+
+    FILE *fp = fopen("Database.hex","rb");
+    if(fp == NULL){
+        printf("Data has not been loaded!\n");
+    }
+    fread(&S_numbers, sizeof(S_numbers), 1, fp);
+    for(int i=0; i < S_numbers; i++)
+    {
+        newStudent = (Student*)malloc(sizeof(Student));
+        
+        if(newStudent == NULL)
+        {
+        printf("Memory allocation failed!\n");
+        break;
+        }
+
+        fread(&temp, sizeof(StudentFile), 1, fp);
+        newStudent->id = temp.id;
+        strcpy(newStudent->name, temp.name);
+        newStudent->grade = temp.grade;
+
+        if(head == NULL)
+        {
+            head = newStudent;
+            tail = newStudent;
+        }
+        else
+        {
+            tail->next = newStudent;
+            tail = newStudent;
+        }
+
+        tail->next = NULL;
+        
+
+
+    }
+    fclose(fp);
+
+    
+}
+
+void Add(){
+    char name[50];
+    int id;
+    float grade;
+
+    newStudent = (Student*)malloc(sizeof(Student));
+    printf("Enter student id:\n");
+    scanf("%d", &id);
+    printf("Enter student name:\n");
+    scanf("%s", name);
+    printf("Enter student grade:\n");
+    scanf("%f", &grade);
+
+    newStudent->id = id;
+    strcpy(newStudent->name, name);
+    newStudent->grade = grade;
+    newStudent->next=NULL;
+
+
+    if(head == NULL)
+    {
+        head = newStudent;
+        tail = newStudent;
+    }
+    else
+    {
+        tail->next = newStudent;
+        tail = newStudent;
+    }
+
+    
+    S_numbers++;
+   
+
+    }
+
+
+    void Save(){
+        Student *current = head;
+        StudentFile temp;
+        FILE *fp = fopen("Database.hex","wb");
+        fwrite(&S_numbers, sizeof(S_numbers), 1, fp);
+
+        for(int i=0; i<S_numbers; i++)
+        {
+        temp.id = current->id;
+        strcpy(temp.name, current->name);
+        temp.grade = current->grade;    
+        fwrite(&temp, sizeof(StudentFile), 1, fp);
+        current = current->next;
+        } 
+        fclose(fp);   
+    }
+
+    int Print(){
+        Student *current = head;
+
+        if(head == NULL){
+            printf("No Data to Print!\n");
+            return 1;
+        }
+
+        for(int i=0; i< S_numbers; i++)
+        {
+            printf("Name:%s\t\t Id:%d\t Grade:%f\n",current->name, current->id, current->grade);
+            current = current->next;
+
+        }
+
+    }
+
+
+    
+
+
+
+
+
+
+
+int main(){
+    Start();
+     Add();
+     Save();
+    Print();
+    free(newStudent);
+
+    return 0;
+}
